@@ -1,15 +1,10 @@
+
 @php
     $editing = isset($user);
 
     $selectedRole = old(
         'role',
-        $editing
-            ? (
-                is_object($user) && method_exists($user, 'getRoleNames')
-                    ? $user->getRoleNames()->first()
-                    : data_get($user, 'role')
-            )
-            : 'employee'
+        $editing ? $user->getRoleNames()->first() : 'employee'
     );
 @endphp
 
@@ -17,143 +12,127 @@
 
     <!-- Full Name -->
     <div class="col-md-6">
-
-        <label class="form-label" for="full_name">
-            Full name <span class="required">*</span>
+        <label for="full_name" class="form-label">
+            Full Name <span class="required">*</span>
         </label>
 
         <input
-            class="form-control @error('full_name') is-invalid @enderror"
-            id="full_name"
+            type="text"
             name="full_name"
-            value="{{ old('full_name', data_get($user ?? null, 'full_name')) }}"
-            maxlength="100"
+            id="full_name"
+            class="form-control @error('full_name') is-invalid @enderror"
+            value="{{ old('full_name', $editing ? $user->full_name : '') }}"
             required
         >
 
         @error('full_name')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
-
     </div>
 
     <!-- Username -->
     <div class="col-md-6">
-
-        <label class="form-label" for="username">
+        <label for="username" class="form-label">
             Username <span class="required">*</span>
         </label>
 
         <input
-            class="form-control @error('username') is-invalid @enderror"
-            id="username"
+            type="text"
             name="username"
-            value="{{ old('username', data_get($user ?? null, 'username')) }}"
-            maxlength="50"
+            id="username"
+            class="form-control @error('username') is-invalid @enderror"
+            value="{{ old('username', $editing ? $user->username : '') }}"
             required
         >
 
         @error('username')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
-
     </div>
 
     <!-- Email -->
     <div class="col-md-6">
-
-        <label class="form-label" for="email">
+        <label for="email" class="form-label">
             Email <span class="required">*</span>
         </label>
 
         <input
             type="email"
-            class="form-control @error('email') is-invalid @enderror"
-            id="email"
             name="email"
-            value="{{ old('email', data_get($user ?? null, 'email')) }}"
+            id="email"
+            class="form-control @error('email') is-invalid @enderror"
+            value="{{ old('email', $editing ? $user->email : '') }}"
             required
         >
 
         @error('email')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
-
     </div>
 
     <!-- Phone -->
     <div class="col-md-6">
-
-        <label class="form-label" for="phone">
+        <label for="phone" class="form-label">
             Phone <span class="required">*</span>
         </label>
 
         <input
-            class="form-control @error('phone') is-invalid @enderror"
-            id="phone"
+            type="text"
             name="phone"
-            value="{{ old('phone', data_get($user ?? null, 'phone')) }}"
+            id="phone"
+            class="form-control @error('phone') is-invalid @enderror"
+            value="{{ old('phone', $editing ? $user->phone : '') }}"
             required
         >
 
         @error('phone')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
-
     </div>
 
     <!-- Birth Date -->
     <div class="col-md-6">
-
-        <label class="form-label" for="birth_date">
-            Birth date <span class="required">*</span>
+        <label for="birth_date" class="form-label">
+            Birth Date <span class="required">*</span>
         </label>
 
         <input
             type="date"
-            class="form-control @error('birth_date') is-invalid @enderror"
-            id="birth_date"
             name="birth_date"
-            value="{{ old('birth_date', $editing ? (is_object(data_get($user, 'birth_date')) ? data_get($user, 'birth_date')->format('Y-m-d') : data_get($user, 'birth_date')) : '') }}"
+            id="birth_date"
+            class="form-control @error('birth_date') is-invalid @enderror"
+            value="{{ old('birth_date', $editing ? $user->birth_date?->format('Y-m-d') : '') }}"
             required
         >
 
         @error('birth_date')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
-
     </div>
 
-    <!-- Department -->
+    <!-- Department ID -->
     <div class="col-md-6">
-
-        <label class="form-label" for="department_id">
+        <label for="department_id" class="form-label">
             Department ID
-            <span class="small text-muted">
-                (optional for now)
-            </span>
         </label>
 
         <input
             type="number"
             min="1"
-            class="form-control @error('department_id') is-invalid @enderror"
-            id="department_id"
             name="department_id"
-            value="{{ old('department_id', data_get($user ?? null, 'department_id')) }}"
-            placeholder="Will be connected to departments later"
+            id="department_id"
+            class="form-control @error('department_id') is-invalid @enderror"
+            value="{{ old('department_id', $editing ? $user->department_id : '') }}"
         >
 
         @error('department_id')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
-
     </div>
 
     <!-- Password -->
     <div class="col-md-6">
-
-        <label class="form-label" for="password">
+        <label for="password" class="form-label">
             Password
 
             @unless($editing)
@@ -163,31 +142,28 @@
 
         <input
             type="password"
-            class="form-control @error('password') is-invalid @enderror"
-            id="password"
             name="password"
+            id="password"
+            class="form-control @error('password') is-invalid @enderror"
             autocomplete="new-password"
             @unless($editing) required @endunless
         >
 
-        <div class="form-text">
-            {{ $editing
-                ? 'Leave blank to keep the current password.'
-                : 'At least 8 characters, including a letter and a number.'
-            }}
-        </div>
+        @if($editing)
+            <div class="form-text">
+                Leave blank to keep the current password.
+            </div>
+        @endif
 
         @error('password')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
-
     </div>
 
     <!-- Confirm Password -->
     <div class="col-md-6">
-
-        <label class="form-label" for="password_confirmation">
-            Confirm password
+        <label for="password_confirmation" class="form-label">
+            Confirm Password
 
             @unless($editing)
                 <span class="required">*</span>
@@ -196,77 +172,73 @@
 
         <input
             type="password"
-            class="form-control"
-            id="password_confirmation"
             name="password_confirmation"
+            id="password_confirmation"
+            class="form-control"
             autocomplete="new-password"
             @unless($editing) required @endunless
         >
-
     </div>
 
     <!-- Profile Photo -->
     <div class="col-md-6">
-
-        <label class="form-label" for="photo">
-            Profile photo
+        <label for="photo" class="form-label">
+            Profile Photo
         </label>
 
         <input
             type="file"
-            accept="image/png,image/jpeg"
-            class="form-control @error('photo') is-invalid @enderror"
-            id="photo"
             name="photo"
+            id="photo"
+            accept=".jpg,.jpeg,.png"
+            class="form-control @error('photo') is-invalid @enderror"
         >
-
-        <div class="form-text">
-            Optional JPG or PNG.
-        </div>
 
         @error('photo')
             <div class="invalid-feedback">{{ $message }}</div>
         @enderror
-
     </div>
 
     <!-- Role -->
     @can('roles.manage')
 
         <div class="col-md-6">
-
-            <label class="form-label" for="role">
+            <label for="role" class="form-label">
                 Role
             </label>
 
+            {{-- Task 1: Roles were hardcoded in the form. --}}
+
+            <!-- Task 2: Roles from database -->
             <select
-                class="form-select @error('role') is-invalid @enderror"
                 name="role"
                 id="role"
+                class="form-select @error('role') is-invalid @enderror"
             >
 
-                <option value="employee"
-                    @selected($selectedRole === 'employee')>
-                    Employee
-                </option>
+                @foreach($roles as $role)
 
-                <option value="manager"
-                    @selected($selectedRole === 'manager')>
-                    Manager
-                </option>
+                    <option
+                        value="{{ $role->name }}"
+                        @selected($selectedRole === $role->name)
+                    >
+                        {{ ucfirst(str_replace('_', ' ', $role->name)) }}
+                    </option>
+
+                @endforeach
 
             </select>
 
             @error('role')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror
-
         </div>
 
     @endcan
 
 </div>
 
+<!-- Form Actions -->
 <div class="form-actions">
 
     <a href="{{ route('users.index') }}"
@@ -275,7 +247,7 @@
     </a>
 
     <button type="submit" class="btn btn-primary">
-        {{ $editing ? 'Save Changes' : 'Create User' }}
+        {{ $editing ? 'Update User' : 'Create User' }}
     </button>
 
 </div>

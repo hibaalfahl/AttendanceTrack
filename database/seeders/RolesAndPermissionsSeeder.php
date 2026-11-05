@@ -11,6 +11,8 @@ class RolesAndPermissionsSeeder extends Seeder
 {
     public function run(): void
     {
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
+
         $permissions = [
             'users.view',
             'users.create',
@@ -44,5 +46,12 @@ class RolesAndPermissionsSeeder extends Seeder
             'users.create',
             'users.update',
         ]);
+
+        foreach (['teacher', 'student', 'exam_officer'] as $role) {
+            Role::firstOrCreate([
+                'name' => $role,
+                'guard_name' => 'web',
+            ]);
+        }
     }
 }

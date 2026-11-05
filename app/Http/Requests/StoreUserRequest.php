@@ -35,7 +35,7 @@ class StoreUserRequest extends FormRequest
             ],
             'department_id' => ['nullable', 'integer', 'min:1'],
             'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
-            'role' => ['nullable', 'in:manager,employee'],
+            'role' => ['nullable','in:manager,employee,teacher,student,exam_officer',],
         ];
     }
 }
